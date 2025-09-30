@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { fetchAllVideoComments, fetchLatestVideoComments } from '@/lib/youtube';
-import { analyzeSentimentConcurrent } from '@/lib/ai-optimized';
+import { analyzeSentimentWithGroq } from '@/lib/ai-services-pro';
 import { APIResponse, CommentData } from '@/types';
 
 export async function GET(request: NextRequest) {
@@ -42,7 +42,8 @@ export async function GET(request: NextRequest) {
       console.log(`Processing TOP ${topCommentsForPieChart.length} comments for pie chart analysis`);
       
       try {
-        const allCommentsWithSentiment = await analyzeSentimentConcurrent(topCommentsForPieChart);
+        // Analyze sentiment with Groq llama-3.3-70b-versatile
+        const allCommentsWithSentiment = await analyzeSentimentWithGroq(topCommentsForPieChart);
         console.log(`Successfully analyzed ${allCommentsWithSentiment.length} top comments for pie chart`);
         
         return NextResponse.json<APIResponse<CommentData[]>>({
@@ -66,7 +67,8 @@ export async function GET(request: NextRequest) {
 
     // For display: fetch LATEST 25 comments sorted by time, analyze sentiment
     const latestComments = await fetchLatestVideoComments(videoId, 25);
-    const commentsWithSentiment = await analyzeSentimentConcurrent(latestComments);
+    // Analyze sentiment with Groq llama-3.3-70b-versatile
+    const commentsWithSentiment = await analyzeSentimentWithGroq(latestComments);
 
     // Return paginated results - use requested limit (up to 25 for display)
     const startIndex = pageToken ? parseInt(pageToken) : 0;

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { generateVideoSummaryWithMistral } from '@/lib/ai-optimized';
+import { generateVideoSummaryWithMistral } from '@/lib/ai-services-pro';
 import { fetchVideoTranscript } from '@/lib/youtube';
 import { APIResponse } from '@/types';
 

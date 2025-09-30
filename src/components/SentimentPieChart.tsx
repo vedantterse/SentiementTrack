@@ -1,49 +1,59 @@
 import React from 'react';
 import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip } from 'recharts';
-import { CommentData } from '@/types';
+
+interface SentimentData {
+  name: string;
+  value: number;
+  color: string;
+  [key: string]: any;
+}
 
 interface SentimentPieChartProps {
-  comments?: CommentData[];
+  data?: SentimentData[];
+  comments?: any[];
   pieChartSentiment?: { positive: number; negative: number; neutral: number; total: number };
   className?: string;
 }
 
-const SentimentPieChart: React.FC<SentimentPieChartProps> = ({ comments, pieChartSentiment, className }) => {
-  // Use pieChartSentiment if available, otherwise calculate from comments
-  const sentimentCounts = pieChartSentiment ? {
-    positive: pieChartSentiment.positive,
-    neutral: pieChartSentiment.neutral,
-    negative: pieChartSentiment.negative
-  } : (comments || []).reduce(
-    (acc, comment) => {
-      if (comment.sentiment) {
-        acc[comment.sentiment]++;
-      }
-      return acc;
-    },
-    { positive: 0, neutral: 0, negative: 0 }
-  );
+const SentimentPieChart: React.FC<SentimentPieChartProps> = ({ 
+  data: propData, 
+  comments, 
+  pieChartSentiment, 
+  className 
+}) => {
+  // Use propData if available, otherwise use pieChartSentiment, otherwise calculate from comments
+  let data: SentimentData[] = [];
+  let total = 0;
 
-  // Prepare data for Recharts
-  const data = [
-    {
-      name: 'Positive',
-      value: sentimentCounts.positive,
-      color: '#C8FF3D'
-    },
-    {
-      name: 'Neutral',
-      value: sentimentCounts.neutral,
-      color: '#94a3b8'
-    },
-    {
-      name: 'Negative',
-      value: sentimentCounts.negative,
-      color: '#FF6A4D'
-    }
-  ].filter(item => item.value > 0); // Only show segments with data
-
-  const total = pieChartSentiment ? pieChartSentiment.total : (sentimentCounts.positive + sentimentCounts.neutral + sentimentCounts.negative);
+  if (propData) {
+    data = propData;
+    total = propData.reduce((sum, item) => sum + item.value, 0);
+  } else if (pieChartSentiment) {
+    data = [
+      { name: 'Positive', value: pieChartSentiment.positive, color: '#C8FF3D' },
+      { name: 'Neutral', value: pieChartSentiment.neutral, color: '#94a3b8' },
+      { name: 'Negative', value: pieChartSentiment.negative, color: '#FF6A4D' }
+    ].filter(item => item.value > 0);
+    total = pieChartSentiment.total;
+  } else if (comments) {
+    const sentimentCounts = comments.reduce(
+      (acc, comment) => {
+        if (comment.sentiment) {
+          acc[comment.sentiment]++;
+        }
+        return acc;
+      },
+      { positive: 0, neutral: 0, negative: 0 }
+    );
+    
+    data = [
+      { name: 'Positive', value: sentimentCounts.positive, color: '#C8FF3D' },
+      { name: 'Neutral', value: sentimentCounts.neutral, color: '#94a3b8' },
+      { name: 'Negative', value: sentimentCounts.negative, color: '#FF6A4D' }
+    ].filter(item => item.value > 0);
+    
+    total = sentimentCounts.positive + sentimentCounts.neutral + sentimentCounts.negative;
+  }
 
   // Custom label function
   const renderLabel = (entry: any) => {
@@ -137,4 +147,5 @@ const SentimentPieChart: React.FC<SentimentPieChartProps> = ({ comments, pieChar
   );
 };
 
+export { SentimentPieChart };
 export default SentimentPieChart;

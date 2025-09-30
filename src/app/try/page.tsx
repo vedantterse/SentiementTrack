@@ -6,6 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { ArrowLeft, Play, Users, MessageSquare, TrendingUp, Clock, Target, Zap, Heart, Award, Lock as LockIcon } from "lucide-react";
 import Link from "next/link";
+import { ConnectAccountButton } from "@/components/ConnectAccountButton";
 import { VideoData, CommentData, AnalyticsData, ParsedUrl } from "@/types";
 import { formatNumber, parseDuration, getTimeElapsed } from "@/lib/youtube";
 import { formatAnalyticsNumber } from "@/lib/metrics";
@@ -409,7 +410,7 @@ export default function TryItPage() {
                         <div className="w-4 h-4 bg-[#FF6A4D] rounded-full animate-pulse"></div>
                         <span className="font-semibold text-sm">Comments</span>
                       </div>
-                      <p className="text-xs text-gray-600">Analyzing sentiment with Gemini AI</p>
+                      <p className="text-xs text-gray-600">Analyzing sentiment with Groq + Mistral AI</p>
                     </div>
                     
                     {/* Pie Chart Analysis */}
@@ -816,9 +817,10 @@ export default function TryItPage() {
                     
                     {/* CTA Button */}
                     <div className="absolute bottom-2 left-2 right-2 z-20">
-                      <button className="w-full bg-[#7A3BFF] text- text-xs font-black py-2 border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-1px] hover:translate-y-[-1px] transition-all uppercase tracking-wide">
-                        Connect Account
-                      </button>
+                      <ConnectAccountButton
+                        className="w-full bg-[#7A3BFF] text-white text-xs font-black py-2 border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-1px] hover:translate-y-[-1px] transition-all uppercase tracking-wide"
+                        unauthenticatedText="Connect Account"
+                      />
                     </div>
                   </CardContent>
                 </Card>
@@ -1212,9 +1214,10 @@ export default function TryItPage() {
                   Connect your channel for unlimited analysis, AI replies, and advanced insights
                 </p>
                 <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                  <Button className="bg-white hover:bg-gray-100 text-[#FF6A4D] border-4 border-white shadow-[4px_4px_0px_0px_rgba(255,255,255,1)] hover:shadow-[6px_6px_0px_0px_rgba(255,255,255,1)] hover:translate-x-[-2px] hover:translate-y-[-2px] transition-all font-bold text-lg px-8 py-4">
-                    🔗 Connect Account
-                  </Button>
+                  <ConnectAccountButton
+                    className="bg-white hover:bg-gray-100 text-[#FF6A4D] border-4 border-white shadow-[4px_4px_0px_0px_rgba(255,255,255,1)] hover:shadow-[6px_6px_0px_0px_rgba(255,255,255,1)] hover:translate-x-[-2px] hover:translate-y-[-2px] transition-all font-bold text-lg px-8 py-4"
+                    unauthenticatedText="🔗 Connect Account"
+                  />
                   <Button
                     variant="outline"
                     className="border-4 border-white text-black hover:bg-black/10 shadow-[4px_4px_0px_0px_rgba(255,255,255,1)] hover:shadow-[6px_6px_0px_0px_rgba(255,255,255,1)] hover:translate-x-[-2px] hover:translate-y-[-2px] transition-all font-bold text-lg px-8 py-4"

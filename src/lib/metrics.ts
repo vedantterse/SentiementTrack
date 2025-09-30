@@ -134,6 +134,19 @@ export function generateCreatorAnalytics(
 }
 
 /**
+ * Format numbers for display (e.g., 1000 -> 1K, 1000000 -> 1M)
+ */
+export function formatNumber(value: number): string {
+  if (value >= 1000000) {
+    return `${(value / 1000000).toFixed(1)}M`;
+  }
+  if (value >= 1000) {
+    return `${(value / 1000).toFixed(0)}K`;
+  }
+  return value.toString();
+}
+
+/**
  * Format analytics numbers for display
  */
 export function formatAnalyticsNumber(value: number, type: 'count' | 'percentage' | 'ratio' | 'hour'): string {

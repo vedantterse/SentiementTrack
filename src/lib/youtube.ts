@@ -356,16 +356,21 @@ export async function fetchLatestVideoComments(videoId: string, maxComments: num
 }
 
 /**
- * Fetch ALL comments from a video (top comments by relevance for pie chart)
+ * Fetch ALL comments from a video (comprehensive fetching with proper batch processing)
  */
 export async function fetchAllVideoComments(videoId: string): Promise<CommentData[]> {
   try {
+    console.log(`🔍 Fetching ALL comments for video ${videoId} with comprehensive batch processing...`);
+    
     const allComments: CommentData[] = [];
     let nextPageToken: string | undefined;
     let requestCount = 0;
-    const maxRequests = 20; // Increased limit for comprehensive comment analysis
+    const maxRequests = 50; // Significantly increased to get ALL comments
     
     do {
+      requestCount++;
+      console.log(`📦 Comment batch ${requestCount}: Fetching up to 100 comments (Total so far: ${allComments.length})`);
+      
       const response = await fetch(
         `${YOUTUBE_API_BASE}/commentThreads?` +
         `videoId=${videoId}&` +
@@ -377,37 +382,54 @@ export async function fetchAllVideoComments(videoId: string): Promise<CommentDat
       );
 
       if (!response.ok) {
+        if (response.status === 403) {
+          console.warn(`⚠️ Comments disabled or quota exceeded for video ${videoId}`);
+          break;
+        }
         throw new Error(`YouTube API error: ${response.status}`);
       }
 
       const data = await response.json();
       
-      if (data.items) {
-        const comments: CommentData[] = data.items.map((item: any) => {
-          const topComment = item.snippet.topLevelComment.snippet;
-          
-          return {
-            id: item.id,
-            authorDisplayName: topComment.authorDisplayName,
-            authorProfileImageUrl: topComment.authorProfileImageUrl,
-            textDisplay: topComment.textDisplay,
-            publishedAt: topComment.publishedAt,
-            likeCount: topComment.likeCount || 0,
-            authorChannelId: topComment.authorChannelId?.value
-          };
-        });
-        
-        allComments.push(...comments);
+      if (!data.items || data.items.length === 0) {
+        console.log(`✅ No more comments available. Total fetched: ${allComments.length}`);
+        break;
       }
-
+      
+      const comments: CommentData[] = data.items.map((item: any) => {
+        const topComment = item.snippet.topLevelComment.snippet;
+        
+        return {
+          id: item.id,
+          authorDisplayName: topComment.authorDisplayName,
+          authorProfileImageUrl: topComment.authorProfileImageUrl,
+          textDisplay: topComment.textDisplay,
+          publishedAt: topComment.publishedAt,
+          likeCount: topComment.likeCount || 0,
+          authorChannelId: topComment.authorChannelId?.value,
+          sentiment: 'neutral' as const,
+          confidence: 0.5,
+          detectedLanguage: 'en'
+        };
+      });
+      
+      allComments.push(...comments);
       nextPageToken = data.nextPageToken;
-      requestCount++;
+      
+      console.log(`✅ Batch ${requestCount}: Added ${comments.length} comments (Total: ${allComments.length})`);
+      
+      // Rate limiting: Wait between requests to avoid quota issues
+      if (nextPageToken && requestCount < maxRequests) {
+        await new Promise(resolve => setTimeout(resolve, 800)); // 800ms delay
+      }
       
     } while (nextPageToken && requestCount < maxRequests);
-
+    
+    console.log(`🎉 Successfully fetched ${allComments.length} total comments for video ${videoId}`);
     return allComments;
+    
   } catch (error) {
-    console.error('Error fetching all video comments:', error);
+    console.error(`Error fetching all video comments for ${videoId}:`, error);
     return [];
   }
 }

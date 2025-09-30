@@ -5,6 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { BarChart3, Brain, MessageCircle, TrendingUp, Target, Zap, Gauge, Users } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { ConnectAccountButton } from "@/components/ConnectAccountButton";
 
 export default function Home() {
   const router = useRouter();
@@ -31,11 +32,9 @@ export default function Home() {
               >
                 Try It
               </Button>
-              <Button 
-                className="bg-[#C8FF3D] hover:bg-[#B8EF2D] text-black border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-2px] hover:translate-y-[-2px] transition-all font-semibold"
-              >
-                Connect Account
-              </Button>
+              <ConnectAccountButton
+                className="bg-[#7A3BFF] text-white border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-2px] hover:translate-y-[-2px] transition-all font-bold px-6"
+              />
             </div>
           </div>
         </div>
@@ -63,13 +62,11 @@ export default function Home() {
               >
                 Try It Free
               </Button>
-              <Button 
+              <ConnectAccountButton
                 size="lg" 
                 variant="outline" 
                 className="border-4 border-black shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-2px] hover:translate-y-[-2px] transition-all font-bold text-lg px-8 py-6"
-              >
-                Connect Account
-              </Button>
+              />
             </div>
           </div>
           <div className="relative">
@@ -97,7 +94,7 @@ export default function Home() {
                     <div className="w-3 h-3 bg-[#4DA6FF] border border-black rounded-full animate-pulse" style={{animationDelay: '0.6s'}}></div>
                   </div>
                   <div className="flex items-center gap-2">
-                    <div className="text-xs font-bold bg-[#4ade80] text-black px-2 py-1 border border-black animate-pulse">LIVE</div>
+                    
                     <div className="text-xs font-bold text-gray-600">SentimentTrack Pro</div>
                   </div>
                 </div>
@@ -355,25 +352,24 @@ export default function Home() {
               <span className="font-bold text-sm">THE SOLUTION</span>
             </div>
             <h2 className="font-bold text-4xl mb-4 text-black">What You Get</h2>
-            <p className="text-xl text-gray-700 font-medium">Four powerful tools in your creator arsenal</p>
+            <p className="text-xl text-gray-700 font-medium">Three powerful tools in your creator arsenal</p>
             <div className="flex justify-center gap-2 mt-4">
               <div className="w-4 h-4 bg-[#C8FF3D] border-2 border-black transform rotate-45"></div>
               <div className="w-4 h-4 bg-[#FF6A4D] border-2 border-black transform rotate-45"></div>
               <div className="w-4 h-4 bg-[#4DA6FF] border-2 border-black transform rotate-45"></div>
-              <div className="w-4 h-4 bg-[#7A3BFF] border-2 border-black transform rotate-45"></div>
             </div>
           </div>
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
             <Card className="border-4 border-black shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:shadow-[10px_10px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-2px] hover:translate-y-[-2px] transition-all bg-white">
               <CardHeader className="text-center">
                 <div className="w-16 h-16 bg-[#C8FF3D] border-4 border-black flex items-center justify-center mx-auto mb-4">
                   <BarChart3 className="w-8 h-8" />
                 </div>
-                <CardTitle className="text-xl font-bold">Sentiment Engine</CardTitle>
+                <CardTitle className="text-xl font-bold">Sentiment Analysis</CardTitle>
               </CardHeader>
               <CardContent>
                 <CardDescription className="text-center font-medium">
-                  Pie charts and bars showing exactly how your audience feels
+                  AI-powered comment sentiment analysis with visual charts and confidence scores
                 </CardDescription>
               </CardContent>
             </Card>
@@ -381,13 +377,13 @@ export default function Home() {
             <Card className="border-4 border-black shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:shadow-[10px_10px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-2px] hover:translate-y-[-2px] transition-all bg-white">
               <CardHeader className="text-center">
                 <div className="w-16 h-16 bg-[#FF6A4D] border-4 border-black flex items-center justify-center mx-auto mb-4">
-                  <Brain className="w-8 h-8" />
+                  <Zap className="w-8 h-8" />
                 </div>
-                <CardTitle className="text-xl font-bold">Transcript Intelligence</CardTitle>
+                <CardTitle className="text-xl font-bold">AI Reply Generator</CardTitle>
               </CardHeader>
               <CardContent>
                 <CardDescription className="text-center font-medium">
-                  AI summaries of your videos in seconds, not hours
+                  Generate authentic replies to comments that match your voice and tone
                 </CardDescription>
               </CardContent>
             </Card>
@@ -395,27 +391,13 @@ export default function Home() {
             <Card className="border-4 border-black shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:shadow-[10px_10px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-2px] hover:translate-y-[-2px] transition-all bg-white">
               <CardHeader className="text-center">
                 <div className="w-16 h-16 bg-[#4DA6FF] border-4 border-black flex items-center justify-center mx-auto mb-4">
-                  <Target className="w-8 h-8" />
+                  <TrendingUp className="w-8 h-8" />
                 </div>
-                <CardTitle className="text-xl font-bold">Competitor Radar</CardTitle>
+                <CardTitle className="text-xl font-bold">Performance Analytics</CardTitle>
               </CardHeader>
               <CardContent>
                 <CardDescription className="text-center font-medium">
-                  See what works for others in your niche
-                </CardDescription>
-              </CardContent>
-            </Card>
-
-            <Card className="border-4 border-black shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:shadow-[10px_10px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-2px] hover:translate-y-[-2px] transition-all bg-white">
-              <CardHeader className="text-center">
-                <div className="w-16 h-16 bg-[#7A3BFF] border-4 border-black flex items-center justify-center mx-auto mb-4">
-                  <Zap className="w-8 h-8" />
-                </div>
-                <CardTitle className="text-xl font-bold">AI Reply Assist</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <CardDescription className="text-center font-medium">
-                  Draft replies instantly that sound like you
+                  Detailed engagement metrics, SEO scores, and channel analytics
                 </CardDescription>
               </CardContent>
             </Card>
@@ -496,25 +478,25 @@ export default function Home() {
                     <div className="w-6 h-6 bg-black border-2 border-black flex items-center justify-center">
                       <span className="text-xs font-bold text-[#C8FF3D]">✓</span>
                     </div>
-                    <span className="font-medium text-black">Advanced AI insights</span>
+                    <span className="font-medium text-black">Advanced sentiment analytics</span>
                   </div>
                   <div className="flex items-center gap-3">
                     <div className="w-6 h-6 bg-black border-2 border-black flex items-center justify-center">
                       <span className="text-xs font-bold text-[#C8FF3D]">✓</span>
                     </div>
-                    <span className="font-medium text-black">AI reply suggestions</span>
+                    <span className="font-medium text-black">AI reply generation</span>
                   </div>
                   <div className="flex items-center gap-3">
                     <div className="w-6 h-6 bg-black border-2 border-black flex items-center justify-center">
                       <span className="text-xs font-bold text-[#C8FF3D]">✓</span>
                     </div>
-                    <span className="font-medium text-black">Competitor analysis</span>
+                    <span className="font-medium text-black">Performance metrics</span>
                   </div>
                   <div className="flex items-center gap-3">
                     <div className="w-6 h-6 bg-black border-2 border-black flex items-center justify-center">
                       <span className="text-xs font-bold text-[#C8FF3D]">✓</span>
                     </div>
-                    <span className="font-medium text-black">Trend forecasting</span>
+                    <span className="font-medium text-black">YouTube Analytics integration</span>
                   </div>
                 </div>
                 <Button className="w-full bg-black hover:bg-gray-800 text-[#C8FF3D] border-4 border-black shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-1px] hover:translate-y-[-1px] transition-all font-bold">
@@ -653,11 +635,11 @@ export default function Home() {
               <CardHeader>
                 <div className="flex items-center gap-4 mb-4">
                   <div className="w-16 h-16 bg-[#C8FF3D] border-4 border-black flex items-center justify-center font-bold text-2xl">
-                    M
+                    R
                   </div>
                   <div>
-                    <CardTitle className="text-xl font-bold">Mike Chen</CardTitle>
-                    <CardDescription className="font-medium">Tech Reviewer • 240K subs</CardDescription>
+                    <CardTitle className="text-xl font-bold">Rahul Sharma</CardTitle>
+                    <CardDescription className="font-medium">Tech Reviewer • 45K subs</CardDescription>
                   </div>
                 </div>
                 <div className="flex gap-1 mb-4">
@@ -670,7 +652,7 @@ export default function Home() {
               </CardHeader>
               <CardContent>
                 <blockquote className="text-lg font-medium text-gray-800 italic">
-                  "SentimentTrack helped me understand my audience like never before. My engagement increased by 150% in just 2 months!"
+                  "SentimentTrack helps me understand my audience better. The sentiment analysis saves me hours of reading comments!"
                 </blockquote>
               </CardContent>
             </Card>
@@ -680,11 +662,11 @@ export default function Home() {
               <CardHeader>
                 <div className="flex items-center gap-4 mb-4">
                   <div className="w-16 h-16 bg-white border-4 border-black flex items-center justify-center font-bold text-2xl">
-                    S
+                    P
                   </div>
                   <div>
-                    <CardTitle className="text-xl font-bold text-white">Sarah Kim</CardTitle>
-                    <CardDescription className="font-medium text-white/90">Lifestyle Vlogger • 89K subs</CardDescription>
+                    <CardTitle className="text-xl font-bold text-white">Priya Patel</CardTitle>
+                    <CardDescription className="font-medium text-white/90">Lifestyle Vlogger • 32K subs</CardDescription>
                   </div>
                 </div>
                 <div className="flex gap-1 mb-4">
@@ -697,7 +679,7 @@ export default function Home() {
               </CardHeader>
               <CardContent>
                 <blockquote className="text-lg font-medium text-white italic">
-                  "The AI reply feature saves me hours every week. My comments section is now a thriving community!"
+                  "The AI reply feature is amazing! It helps me respond to comments faster while maintaining my personal touch."
                 </blockquote>
               </CardContent>
             </Card>
@@ -710,8 +692,8 @@ export default function Home() {
                     A
                   </div>
                   <div>
-                    <CardTitle className="text-xl font-bold text-white">Alex Rodriguez</CardTitle>
-                    <CardDescription className="font-medium text-white/90">Gaming Creator • 1.2M subs</CardDescription>
+                    <CardTitle className="text-xl font-bold text-white">Arjun Kumar</CardTitle>
+                    <CardDescription className="font-medium text-white/90">Gaming Creator • 78K subs</CardDescription>
                   </div>
                 </div>
                 <div className="flex gap-1 mb-4">
@@ -724,7 +706,7 @@ export default function Home() {
               </CardHeader>
               <CardContent>
                 <blockquote className="text-lg font-medium text-white italic">
-                  "The trend analysis feature helped me spot viral formats early. Three of my videos hit 1M+ views!"
+                  "The analytics dashboard gives me insights I never had before. Perfect for understanding my gaming audience!"
                 </blockquote>
               </CardContent>
             </Card>
@@ -733,20 +715,20 @@ export default function Home() {
           {/* Social Proof Stats */}
           <div className="mt-16 grid md:grid-cols-4 gap-6 text-center">
             <div className="bg-white border-4 border-black p-6 transform hover:scale-105 transition-transform">
-              <div className="text-4xl font-bold text-[#7A3BFF] mb-2">10K+</div>
+              <div className="text-4xl font-bold text-[#7A3BFF] mb-2">500+</div>
               <div className="font-bold text-gray-800">Active Creators</div>
             </div>
             <div className="bg-white border-4 border-black p-6 transform hover:scale-105 transition-transform">
-              <div className="text-4xl font-bold text-[#FF6A4D] mb-2">2.5M+</div>
+              <div className="text-4xl font-bold text-[#FF6A4D] mb-2">10K+</div>
               <div className="font-bold text-gray-800">Videos Analyzed</div>
             </div>
             <div className="bg-white border-4 border-black p-6 transform hover:scale-105 transition-transform">
-              <div className="text-4xl font-bold text-[#C8FF3D] mb-2">150%</div>
-              <div className="font-bold text-gray-800">Avg Engagement Boost</div>
+              <div className="text-4xl font-bold text-[#C8FF3D] mb-2">50K+</div>
+              <div className="font-bold text-gray-800">Comments Processed</div>
             </div>
             <div className="bg-white border-4 border-black p-6 transform hover:scale-105 transition-transform">
-              <div className="text-4xl font-bold text-[#4DA6FF] mb-2">50M+</div>
-              <div className="font-bold text-gray-800">Comments Processed</div>
+              <div className="text-4xl font-bold text-[#4DA6FF] mb-2">24/7</div>
+              <div className="font-bold text-gray-800">AI Assistance</div>
             </div>
           </div>
 
@@ -754,10 +736,10 @@ export default function Home() {
           <div className="mt-12 text-center">
             <div className="inline-flex gap-6 items-center flex-wrap justify-center">
               <div className="bg-black text-[#C8FF3D] px-6 py-3 border-4 border-black font-bold transform rotate-1">
-                ✓ GDPR Compliant
+                ✓ Data Secure
               </div>
               <div className="bg-black text-[#FF6A4D] px-6 py-3 border-4 border-black font-bold transform -rotate-1">
-                ✓ YouTube Partner
+                ✓ Official YouTube API
               </div>
               <div className="bg-black text-[#4DA6FF] px-6 py-3 border-4 border-black font-bold transform rotate-1">
                 ✓ 99.9% Uptime
@@ -777,12 +759,11 @@ export default function Home() {
             <p className="text-xl text-black/80 font-medium">
               Join thousands of creators who've already leveled up their content game.
             </p>
-            <Button 
+            <ConnectAccountButton
               size="lg" 
               className="bg-black hover:bg-gray-800 text-white border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] hover:shadow-[12px_12px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-2px] hover:translate-y-[-2px] transition-all font-bold text-xl px-12 py-8"
-            >
-              Connect Your Account
-            </Button>
+              unauthenticatedText="Connect Your Account"
+            />
             <div className="flex justify-center gap-4">
               <Badge className="bg-white text-black border-2 border-black font-bold">Early Access</Badge>
               <Badge className="bg-white text-black border-2 border-black font-bold">No Credit Card</Badge>
