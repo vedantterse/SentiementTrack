@@ -54,17 +54,18 @@ As a creator, you've probably been there - you upload a video, get hundreds of c
 
 ## 🎬 See it in action
 
+<p align="center">
+  <img src="Images/1.png" alt="SentimentTrack - AI-Powered YouTube Comment Analysis" width="80%"/>
+</p>
+
 <div align="center">
-<div style="overflow-x: auto; white-space: nowrap; padding: 20px; background: linear-gradient(135deg, #7A3BFF 0%, #C8FF3D 100%); border-radius: 15px; margin: 20px 0;">
-<img src="Images/1.png" alt="Sentiment analysis dashboard" width="380px" style="margin: 0 12px; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.3); border: 3px solid #ffffffff;">
-<img src="Images/2.png" alt="Comment analysis with AI insights" width="380px" style="margin: 0 12px; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.3); border: 3px solid #fff;">
-<img src="Images/3.png" alt="Real-time sentiment pie chart" width="380px" style="margin: 0 12px; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.3); border: 3px solid #fff;">
-<img src="Images/4.png" alt="AI-generated reply suggestions" width="380px" style="margin: 0 12px; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.3); border: 3px solid #fff;">
-<img src="Images/5.png" alt="Analytics overview" width="380px" style="margin: 0 12px; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.3); border: 3px solid #fff;">
-<img src="Images/6.png" alt="Creator insights dashboard" width="380px" style="margin: 0 12px; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.3); border: 3px solid #fff;">
-<img src="Images/7.png" alt="Performance metrics" width="380px" style="margin: 0 12px; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.3); border: 3px solid #fff;">
-<img src="Images/8.png" alt="Channel overview" width="380px" style="margin: 0 12px; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.3); border: 3px solid #fff;">
-</div>
+  
+**✨ Want to see more UI screenshots and features?**
+
+[![View More Screenshots](https://img.shields.io/badge/🖼️_View_More-Screenshots-7A3BFF?style=for-the-badge&logoColor=white)](./Images)
+
+*Explore the complete dashboard, sentiment analysis, AI replies, and analytics features*
+
 </div>
 
 ---
