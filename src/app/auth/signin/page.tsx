@@ -2,13 +2,13 @@
 
 import { signIn, getProviders } from "next-auth/react";
 import { useAuth } from "@/lib/auth";
-import { useEffect, useState } from "react";
+import { useEffect, useState, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 
-export default function SignIn() {
-  const [providers, setProviders] = useState<any>(null);
+function SignInContent() {
+  const [providers, setProviders] = useState<Record<string, { id: string; name: string }> | null>(null);
   const { isAuthenticated, isLoading } = useAuth();
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -113,5 +113,13 @@ export default function SignIn() {
         </CardContent>
       </Card>
     </div>
+  );
+}
+
+export default function SignIn() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <SignInContent />
+    </Suspense>
   );
 }

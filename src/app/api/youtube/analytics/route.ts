@@ -54,13 +54,19 @@ async function generateFallbackViewsData(videoId: string): Promise<AnalyticsResp
     const publishedDate = new Date(video.snippet.publishedAt);
     const currentDate = new Date();
     
-    // Calculate days since publication (minimum 1 day)
-    const daysSincePublished = Math.max(1, Math.ceil((currentDate.getTime() - publishedDate.getTime()) / (1000 * 60 * 60 * 24)));
-    const daysToShow = Math.min(30, daysSincePublished);
+    // Calculate days since publication, accounting for YouTube Analytics API delay (24-48 hours)
+    // Analytics data is typically available up to 2 days ago (Oct 3rd), not today (Oct 5th)
+    const analyticsEndDate = new Date(currentDate);
+    analyticsEndDate.setDate(currentDate.getDate() - 2); // 2 days ago to match API delay
     
-    console.log(`📅 Video published: ${publishedDate.toDateString()}, ${daysSincePublished} days ago, showing ${daysToShow} days`);
+    const daysSincePublished = Math.max(1, Math.ceil((analyticsEndDate.getTime() - publishedDate.getTime()) / (1000 * 60 * 60 * 24)));
     
-    // Generate realistic daily view distribution starting from published date
+    // Show data up to analytics end date (Oct 3rd), limited to 30 days max
+    const daysToShow = Math.min(30, daysSincePublished + 1); // +1 to include the end date
+    
+    console.log(`📅 Video published: ${publishedDate.toDateString()}, analytics available up to: ${analyticsEndDate.toDateString()}, showing ${daysToShow} days`);
+    
+    // Generate realistic daily view distribution from published date up to analytics end date
     const viewsData: ViewsData[] = [];
     let cumulativeViews = 0;
     
@@ -69,13 +75,25 @@ async function generateFallbackViewsData(videoId: string): Promise<AnalyticsResp
       const date = new Date(publishedDate);
       date.setDate(publishedDate.getDate() + i);
       
+      // Stop if we exceed the analytics end date (2 days ago)
+      if (date > analyticsEndDate) {
+        break;
+      }
+      
       // Simulate realistic view distribution (viral pattern)
       let dailyViews: number;
       const dayIndex = i / Math.max(daysToShow - 1, 1); // Avoid division by zero
       
+      // Check if this is the most recent available day (analytics end date)
+      const isLatestAvailable = date.toDateString() === analyticsEndDate.toDateString();
+      
       if (i === 0) {
         // First day (publish day): 20-40% of total views
         dailyViews = Math.round(totalViews * (0.20 + Math.random() * 0.20));
+      } else if (isLatestAvailable) {
+        // Latest available day gets normal distribution (not partial like "today" would)
+        const remainingViews = Math.max(0, totalViews - cumulativeViews);
+        dailyViews = Math.round(remainingViews * (0.2 + Math.random() * 0.3)); // 20-50% of remaining views
       } else if (dayIndex < 0.2) {
         // Next few days: 15-25% of total views
         dailyViews = Math.round(totalViews * (0.10 + Math.random() * 0.15));
@@ -219,13 +237,18 @@ export async function GET(req: NextRequest) {
 
       const publishedDate = new Date(publishedAt);
       const currentDate = new Date();
-      const videoAge = Math.ceil((currentDate.getTime() - publishedDate.getTime()) / (1000 * 60 * 60 * 24));
       
-      // Set date range from published date to today (max 30 days)
+      // Account for YouTube Analytics API delay (data available up to 2 days ago)
+      const analyticsEndDate = new Date(currentDate);
+      analyticsEndDate.setDate(currentDate.getDate() - 2);
+      
+      const videoAge = Math.ceil((analyticsEndDate.getTime() - publishedDate.getTime()) / (1000 * 60 * 60 * 24));
+      
+      // Set date range from published date to 2 days ago (max 30 days)
       const startDate = publishedDate.toISOString().split('T')[0];
-      const endDate = currentDate.toISOString().split('T')[0];
+      const endDate = analyticsEndDate.toISOString().split('T')[0];
       
-      console.log(`📅 Analytics range: ${startDate} to ${endDate} (${videoAge} days)`);
+      console.log(`📅 Real Analytics range: ${startDate} to ${endDate} (${videoAge} days, accounting for API delay)`);
 
       // Get daily views data for the specific video from publish date
       const viewsResponse = await youtubeAnalytics.reports.query({
@@ -323,8 +346,8 @@ export async function GET(req: NextRequest) {
       data: analyticsData
     });
 
-    // Cache for 1 hour
-    response.headers.set('Cache-Control', 'private, s-maxage=3600, stale-while-revalidate=1800');
+    // Use shorter cache for more frequent updates
+    response.headers.set('Cache-Control', 'private, s-maxage=300, stale-while-revalidate=300'); // 5 minutes cache
     
     return response;
 

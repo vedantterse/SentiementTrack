@@ -15,7 +15,7 @@ export async function GET(request: NextRequest) {
     }
 
     const { searchParams } = new URL(request.url);
-    const days = parseInt(searchParams.get('days') || '10'); // Changed from 30 to 10
+    const days = parseInt(searchParams.get('days') || '10'); 
 
     // Set up YouTube Analytics API client
     const auth = new google.auth.OAuth2();
@@ -25,7 +25,7 @@ export async function GET(request: NextRequest) {
     // Calculate date range with buffer
     const endDate = new Date();
     const startDate = new Date();
-    startDate.setDate(startDate.getDate() - (days - 1)); // 10 days back from today
+    startDate.setDate(startDate.getDate() - (days - 1)); 
     
     // Add 2 buffer days for future visualization
     const futureEndDate = new Date();
@@ -79,6 +79,12 @@ export async function GET(request: NextRequest) {
             days
           }
         }
+      }, {
+        headers: {
+          'Cache-Control': 'no-cache, no-store, must-revalidate, max-age=0',
+          'Pragma': 'no-cache',
+          'Expires': '0'
+        }
       });
 
     } catch (analyticsError: any) {
@@ -88,21 +94,34 @@ export async function GET(request: NextRequest) {
       const mockViewsData = [];
       const mockSubscriberData = [];
       
-      // Generate past data (days - 1 to 0 days ago)
+      // Generate past data (days - 1 to 0 days ago) - extending to current date
       for (let i = days - 1; i >= 0; i--) {
         const date = new Date();
         date.setDate(date.getDate() - i);
         
-        // Add some realistic data for recent days
-        const hasData = i <= 2; // Only last 3 days have data
+        // Show realistic data for all recent days, with gradual decrease for older days
+        const isRecent = i <= 5; 
+        const isToday = i === 0;
+        
+        let viewsAmount;
+        if (isToday) {
+          // Today should have partial data
+          viewsAmount = Math.floor(Math.random() * 80) + 20;
+        } else if (isRecent) {
+          // Recent days have good data
+          viewsAmount = Math.floor(Math.random() * 150) + 30;
+        } else {
+          // Older days have lower but realistic data
+          viewsAmount = Math.floor(Math.random() * 50) + 10;
+        }
         
         mockViewsData.push({
           date: formatDate(date),
-          views: hasData ? Math.floor(Math.random() * 150) + 50 : Math.floor(Math.random() * 20) + 5
+          views: viewsAmount
         });
 
-        const gained = hasData ? Math.floor(Math.random() * 8) + 2 : Math.floor(Math.random() * 3) + 1;
-        const lost = hasData ? Math.floor(Math.random() * 3) : Math.floor(Math.random() * 1);
+        const gained = isRecent ? Math.floor(Math.random() * 8) + 2 : Math.floor(Math.random() * 3) + 1;
+        const lost = isRecent ? Math.floor(Math.random() * 3) : Math.floor(Math.random() * 1);
         
         mockSubscriberData.push({
           date: formatDate(date),
@@ -137,10 +156,16 @@ export async function GET(request: NextRequest) {
           subscribers: mockSubscriberData,
           dateRange: {
             start: formatDate(startDate),
-            end: formatDate(futureEndDate), // Include buffer in range
-            days: days + 2 // Total days including buffer
+            end: formatDate(futureEndDate), 
+            days: days + 2 
           },
           isMockData: true
+        }
+      }, {
+        headers: {
+          'Cache-Control': 'no-cache, no-store, must-revalidate, max-age=0',
+          'Pragma': 'no-cache',
+          'Expires': '0'
         }
       });
     }
