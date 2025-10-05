@@ -34,9 +34,9 @@ const SentimentOverTimeChart = ({ data, containerless = false, heightClass = 'h-
           <Line 
             type="monotone" 
             dataKey="sentiment_score" 
-            stroke="#2563EB" 
+            stroke="#7A3BFF" 
             strokeWidth={3} 
-            activeDot={{ r: 6 }}
+            activeDot={{ r: 6, stroke: '#000000', strokeWidth: 2, fill: '#C8FF3D' }}
           />
         </LineChart>
       </ResponsiveContainer>
@@ -46,13 +46,15 @@ const SentimentOverTimeChart = ({ data, containerless = false, heightClass = 'h-
   if (containerless) return ChartCore;
 
   return (
-    <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 col-span-1 lg:col-span-2">
-      <h3 className="text-lg font-semibold text-gray-900 mb-4">Sentiment Over Time</h3>
-      {ChartCore}
+    <div className="bg-white border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] rounded-xl col-span-1 lg:col-span-2">
+      <div className="bg-gradient-to-r from-[#F3E8FF] to-[#E8F4FD] border-b-4 border-black p-4 rounded-t-xl">
+        <h3 className="text-lg font-bold text-black">Sentiment Over Time</h3>
+      </div>
+      <div className="p-6 rounded-b-xl">
+        {ChartCore}
+      </div>
     </div>
   );
 };
 
 export default SentimentOverTimeChart;
-
-
