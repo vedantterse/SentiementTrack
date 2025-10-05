@@ -24,7 +24,14 @@ export default function ChannelAnalyticsCharts({ className }: ChannelAnalyticsCh
     const fetchAnalyticsData = async () => {
       try {
         setLoading(true);
-        const response = await fetch('/api/youtube/analytics-charts?days=10'); // Changed from 30 to 10
+        // Add cache-busting parameter to ensure fresh data
+        const timestamp = new Date().getTime();
+        const response = await fetch(`/api/youtube/analytics-charts?days=10&t=${timestamp}`, {
+          cache: 'no-store',
+          headers: {
+            'Cache-Control': 'no-cache'
+          }
+        });
         
         if (!response.ok) {
           const errorData = await response.json();
@@ -34,6 +41,7 @@ export default function ChannelAnalyticsCharts({ className }: ChannelAnalyticsCh
         const data = await response.json();
         setAnalyticsData(data.data);
         setError(null);
+        console.log('📊 Analytics data refreshed:', data.data.dateRange);
       } catch (error) {
         console.error('Error fetching analytics data:', error);
         setError(error instanceof Error ? error.message : 'Failed to load analytics data');

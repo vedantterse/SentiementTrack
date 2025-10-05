@@ -58,12 +58,19 @@ const DataVisualization: React.FC<DataVisualizationProps> = ({
       setAnalyticsLoading(true);
       try {
         console.log('📊 Fetching real YouTube Analytics data...');
-        const response = await fetch(`/api/youtube/analytics?videoId=${videoId}`);
+        // Add cache-busting parameter to ensure fresh data
+        const timestamp = new Date().getTime();
+        const response = await fetch(`/api/youtube/analytics?videoId=${videoId}&t=${timestamp}`, {
+          cache: 'no-store',
+          headers: {
+            'Cache-Control': 'no-cache'
+          }
+        });
         const data = await response.json();
 
         if (data.success) {
           setAnalyticsData(data.data);
-          console.log(`✅ Analytics loaded: ${data.data.dataSource} data with ${data.data.viewsPerDay.length} days`);
+          console.log(`✅ Analytics loaded: ${data.data.dataSource} data with ${data.data.viewsPerDay.length} days up to ${new Date().toDateString()}`);
         } else {
           console.error('Failed to fetch analytics:', data.error);
         }
