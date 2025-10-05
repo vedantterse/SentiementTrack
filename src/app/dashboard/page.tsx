@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect ,useMemo} from "react";
 import { useAuth } from "@/lib/auth";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
@@ -13,6 +13,7 @@ import AdvancedMetrics from "@/components/AdvancedMetrics";
 import FeedbackInsights from "@/components/FeedbackInsights";
 import CommentAnalysis from "@/components/CommentAnalysis";
 import DataVisualization from "@/components/DataVisualization";
+import SentimentOverTimeChart from "@/components/SentimentOverTimeChart";
 import { VideoAnalysisSkeleton } from "@/components/SkeletonLoaders";
 import { 
   BarChart3, 
@@ -457,6 +458,32 @@ export default function DashboardPage() {
     console.log('💾 Video data cached successfully');
   };
 
+const sentimentOverTimeData = useMemo(() => {
+    if (!videoComments || videoComments.length === 0) return [] as { date: string; sentiment_score: number }[];
+
+    const dateToScores: Record<string, number[]> = {};
+    for (const comment of videoComments) {
+      const published = comment.publishedAt ? new Date(comment.publishedAt) : null;
+      if (!published) continue;
+      const dateKey = `${published.getFullYear()}-${String(published.getMonth() + 1).padStart(2, '0')}-${String(published.getDate()).padStart(2, '0')}`;
+      const sentiment = comment.sentiment || 'neutral';
+      const score = sentiment === 'positive' ? 1 : sentiment === 'negative' ? -1 : 0;
+      if (!dateToScores[dateKey]) dateToScores[dateKey] = [];
+      dateToScores[dateKey].push(score);
+    }
+
+    const entries = Object.entries(dateToScores)
+      .map(([date, scores]) => ({
+        date,
+        sentiment_score: scores.reduce((a, b) => a + b, 0) / Math.max(scores.length, 1)
+      }))
+      .sort((a, b) => a.date.localeCompare(b.date));
+
+    return entries;
+  }, [videoComments]);
+
+
+
   const loadAIAnalysisForCache = async (videoId: string, transcript: string, videoDetails: any) => {
     if (!videoDetails) return null;
 
@@ -779,6 +806,10 @@ export default function DashboardPage() {
                 analyzedComments={videoComments.filter(c => c.sentiment).length}
                 loading={loadingStates.comments}
               />
+
+              {videoComments && videoComments.length > 0 && (
+                <SentimentOverTimeChart data={sentimentOverTimeData} />
+              )}
 
               {/* Comment Analysis */}
               <CommentAnalysis

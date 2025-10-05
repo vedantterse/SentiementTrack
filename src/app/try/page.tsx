@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState,useMemo } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -13,6 +13,7 @@ import { formatAnalyticsNumber } from "@/lib/metrics";
 import SentimentPieChart from "@/components/SentimentPieChart";
 import NicheTrendFinder from "@/components/NicheTrendFinder";
 import AIRecommendations from "@/components/AIRecommendations";
+import SentimentOverTimeChart from "@/components/SentimentOverTimeChart";
 
 interface AnalysisState {
   loading: boolean;
@@ -295,6 +296,30 @@ export default function TryItPage() {
       displayedComments: allAvailableComments
     }));
   };
+
+  const sentimentOverTimeData = useMemo(() => {
+    if (!analysis.comments || analysis.comments.length === 0) return [] as { date: string; sentiment_score: number }[];
+
+    const dateToScores: Record<string, number[]> = {};
+    for (const comment of analysis.comments) {
+      const published = comment.publishedAt ? new Date(comment.publishedAt) : null;
+      if (!published) continue;
+      const dateKey = `${published.getFullYear()}-${String(published.getMonth() + 1).padStart(2, '0')}-${String(published.getDate()).padStart(2, '0')}`;
+      const sentiment = comment.sentiment || 'neutral';
+      const score = sentiment === 'positive' ? 1 : sentiment === 'negative' ? -1 : 0;
+      if (!dateToScores[dateKey]) dateToScores[dateKey] = [];
+      dateToScores[dateKey].push(score);
+    }
+
+    const entries = Object.entries(dateToScores)
+      .map(([date, scores]) => ({
+        date,
+        sentiment_score: scores.reduce((a, b) => a + b, 0) / Math.max(scores.length, 1)
+      }))
+      .sort((a, b) => a.date.localeCompare(b.date));
+
+    return entries;
+  }, [analysis.comments]);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-orange-100 via-pink-50 to-purple-100">
@@ -857,6 +882,18 @@ export default function TryItPage() {
                 error={analysis.error}
               />
             </div>
+
+             {/* Sentiment Over Time Chart - Match existing card style */}
+            {analysis.comments && analysis.comments.length > 0 && sentimentOverTimeData.length > 0 && (
+              <Card className="border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] bg-white">
+                <CardHeader className="bg-[#E8F4FD] border-b-4 border-black">
+                  <CardTitle className="font-bold text-xl text-black">📈 Sentiment Over Time</CardTitle>
+                </CardHeader>
+                <CardContent className="p-6">
+                  <SentimentOverTimeChart containerless data={sentimentOverTimeData} />
+                </CardContent>
+              </Card>
+            )}
 
             {/* AI Optimization Recommendations */}
             <AIRecommendations 
