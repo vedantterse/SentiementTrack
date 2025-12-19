@@ -45,18 +45,19 @@ export async function POST(request: NextRequest) {
     console.log(`🤖 Generating AI reply for comment: "${commentText.substring(0, 50)}..."`);
     console.log(`📹 Video: "${videoTitle}" (${videoId})`);
 
-    // Clean and prepare context
+    // Clean and prepare context with FORCED English language
     const replyContext: ReplyGenerationContext = {
       commentText: cleanText(commentText),
       videoTitle: cleanText(videoTitle),
       videoDescription: videoDescription ? cleanText(videoDescription) : '',
       transcript: transcript ? cleanText(transcript) : '',
       channelName: channelTitle ? cleanText(channelTitle) : 'Creator',
+      commentLanguage: 'en', // FORCE English for all replies
       replyTone: replyTone as 'friendly' | 'professional' | 'casual' | 'humorous'
     };
 
     console.log(`🧠 Generating AI reply with Mistral medium-2508`);
-    console.log(`🌍 Detected language: ${detectLanguage(commentText)}, Tone: ${replyTone}`);
+    console.log(`🌍 FORCED English language (was: ${detectLanguage(commentText)}), Tone: ${replyTone}`);
 
     // Generate reply using Mistral medium-2508
     const generatedReply = await generateReplyWithMistral(replyContext);
@@ -88,7 +89,7 @@ export async function POST(request: NextRequest) {
           commentId,
           tone: replyTone,
           processingTimeMs: processingTime,
-          model: 'mistral-medium-2508',
+          model: 'mistral-medium-latest',
           generatedAt: new Date().toISOString()
         }
       }
@@ -114,7 +115,7 @@ export async function POST(request: NextRequest) {
 export async function GET() {
   return NextResponse.json({
     service: 'AI Reply Generation API',
-    model: 'mistral-medium-2508',
+    model: 'mistral-medium-latest',
     version: '1.0.0',
     description: 'Generate AI-powered replies for YouTube comments (preview only)',
     features: [

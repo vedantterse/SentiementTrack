@@ -1,19 +1,4 @@
-/**
- * Professional AI Services Architecture for Creator Intelligence Platform
- * 
- * Architecture:
- * - Groq (llama-3.3-70b-versatile) for sentiment analysis
- * - Mistral (mistral-medium-2508) for personalized, multilingual reply generation  
- * - Mistral (mistral-large-latest) for creator hub analytics and insights
- * 
- * Features:
- * - Proper TypeScript interfaces with strict typing
- * - Professional error handling with retry logic
- * - Rate limiting and backoff strategies
- * - Multilingual support (EN, HI, MR, ES, FR, DE)
- * - Context-aware response generation
- * - Character encoding fixes for proper \n handling
- */
+
 
 import { CommentData } from '@/types';
 import { Groq } from 'groq-sdk';
@@ -95,10 +80,10 @@ const CONFIG = {
     temperature: 0.1,
   },
   mistral: {
-    replyModel: 'mistral-medium-2508',
-    analyticsModel: 'mistral-large-latest',
+    replyModel: 'mistral-small-latest', // Changed to free tier model
+    analyticsModel: 'mistral-small-latest', // Changed to free tier model
     maxRetries: 3,
-    delayMs: 500,
+    delayMs: 1500, // Increased delay to avoid rate limits
     temperature: 0.7,
   }
 } as const;
@@ -302,8 +287,6 @@ ANALYSIS GUIDELINES:
 
 MULTILINGUAL CONSIDERATIONS:
 - Hindi/Marathi: "धन्यवाद", "छान", "मस्त" = positive
-- Spanish: "muy bueno", "gracias" = positive  
-- French: "très bien", "merci" = positive
 - Detect sarcasm and cultural context
 
 RETURN EXACTLY THIS JSON FORMAT:
@@ -495,7 +478,14 @@ export async function generateReplyWithMistral(context: ReplyGenerationContext):
       // Exponential backoff
       const backoffDelay = calculateBackoff(attempt, CONFIG.mistral.delayMs);
       console.log(`⏳ Retrying Mistral reply in ${backoffDelay}ms`);
-      await delay(backoffDelay);
+      
+      // Special handling for rate limit errors (429)
+      if (error instanceof Error && error.message.includes('429')) {
+        console.warn('⚠️ Rate limit hit - using longer backoff');
+        await delay(backoffDelay * 2); // Double the delay for rate limits
+      } else {
+        await delay(backoffDelay);
+      }
     }
   }
   
@@ -520,12 +510,14 @@ function createMistralReplyPrompt(context: ReplyGenerationContext): string {
 
   const detectedLang = commentLanguage || detectLanguage(commentText);
   
-  return `Generate an authentic YouTube creator reply to this comment. Be natural, engaging, and respond in the same language as the comment.
+  return `Generate an authentic YouTube creator reply to this comment. CRITICAL: You MUST respond in ENGLISH ONLY, regardless of the comment language.
+
+IMPORTANT: REPLY IN ENGLISH ONLY - DO NOT USE SPANISH, HINDI, OR ANY OTHER LANGUAGE
 
 CONTEXT:
 - Video: "${videoTitle}"
 - Channel: ${channelName || 'Your Channel'}
-- Comment Language: ${detectedLang}
+- Reply Language: ENGLISH ONLY
 - Comment Sentiment: ${commentSentiment || 'neutral'}
 - Desired Tone: ${replyTone}
 
@@ -537,18 +529,17 @@ ${videoDescription ? `Description: ${videoDescription.substring(0, 200)}...` : '
 ${transcript ? `Video Content: ${transcript.substring(0, 300)}...` : ''}
 
 REPLY GUIDELINES:
-1. LANGUAGE: Respond in the same language as the comment
+1. LANGUAGE: ENGLISH ONLY - Never use Spanish, Hindi, or other languages
 2. LENGTH: 5-30 words maximum (YouTube-appropriate)
 3. TONE: Match the ${replyTone} tone while being authentic
 4. PERSONALITY: Sound like a real creator, not an AI
 5. ENGAGEMENT: Encourage further interaction when appropriate
-6. CULTURAL: Respect cultural context and references
+6. CONSISTENCY: Always reply in English regardless of comment language
 
-EXAMPLES BY LANGUAGE:
-English: "Thanks! That part was actually super tricky to film 😅"
-Hindi: "धन्यवाद! आपको पसंद आया, बहुत खुशी हुई! 🙏"
-Spanish: "¡Gracias! Me alegra que te haya gustado el video 😊"
-French: "Merci ! Content que ça t'ait plu ! 🎉"
+ENGLISH EXAMPLES ONLY:
+- Positive: "Thanks! That part was actually super tricky to film 😅"
+- Neutral: "Great question! I cover that around the 3 minute mark �"
+- Negative: "Thanks for the feedback! Always trying to improve 💪"
 
 TONE EXAMPLES:
 - Friendly: Use emojis, contractions, warm language
@@ -556,7 +547,7 @@ TONE EXAMPLES:
 - Casual: Relaxed, conversational, like talking to a friend
 - Humorous: Light jokes, wordplay, fun responses (when appropriate)
 
-Generate ONLY the reply text with no quotes or prefixes:`;
+Generate ONLY the reply text in ENGLISH with no quotes or prefixes (NO SPANISH/HINDI/OTHER LANGUAGES):`;
 }
 
 /**
@@ -655,25 +646,6 @@ function generateIntelligentFallbackReply(context: ReplyGenerationContext): stri
           "देखने के लिए धन्यवाद! 😊",
           "comment करने के लिए शुक्रिया! 🙌",
           "आपका साथ बहुत अच्छा लगता है! ❤️"
-        ]
-      }
-    },
-    es: {
-      friendly: {
-        positive: [
-          "¡Muchísimas gracias! Me alegra que te haya gustado! 😊❤️",
-          "¡Qué bueno que lo disfrutaste! ¡Más contenido pronto! 🙌",
-          "¡Tu comentario me hizo el día! ¡Gracias por ver! 🌟"
-        ],
-        negative: [
-          "Gracias por el feedback! Siempre tratando de mejorar 💪",
-          "Tienes razón! Trabajaré en eso para la próxima 👍",
-          "Aprecio tu honestidad! Me ayuda a crecer 🙏"
-        ],
-        neutral: [
-          "¡Gracias por ver y comentar! 😊",
-          "¡Buena pregunta! Gracias por participar 💭",
-          "¡Aprecio que te tomes el tiempo de comentar! 🙌"
         ]
       }
     }

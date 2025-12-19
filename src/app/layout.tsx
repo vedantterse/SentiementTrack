@@ -29,6 +29,7 @@ export default function RootLayout({
     <html lang="en">
       <body
         className={`${spaceGrotesk.variable} ${inter.variable} font-sans antialiased`}
+        suppressHydrationWarning
       >
         <Providers session={null}>
           {children}

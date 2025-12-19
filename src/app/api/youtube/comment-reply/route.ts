@@ -161,7 +161,7 @@ export async function POST(request: NextRequest) {
             videoId,
             commentId,
             processingTimeMs: processingTime,
-            model: customReply ? 'custom' : 'mistral-medium-2508',
+            model: customReply ? 'custom' : 'mistral-medium-latest',
             language: detectLanguage(commentText),
             tone: replyTone,
             isCustomReply: !!customReply
