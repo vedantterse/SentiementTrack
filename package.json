@@ -22,7 +22,7 @@
     "googleapis": "^160.0.0",
     "groq-sdk": "^0.33.0",
     "lucide-react": "^0.544.0",
-    "next": "15.5.4",
+    "next": "15.5.9",
     "next-auth": "^4.24.11",
     "react": "19.1.0",
     "react-dom": "19.1.0",
